@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,18 +17,66 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Folder } from "lucide-react";
+import api from '../api';
+import { getBookingDetails } from "./bookingDetails";
+import { generatePdf } from "./GeneratePdf";
 
-const departments = [
-  { label: "Sales", value: "sales" },
-  { label: "Marketing", value: "marketing" },
-  { label: "HR", value: "hr" },
-  { label: "Support", value: "support" },
-  { label: "Development", value: "dev" },
-];
+
+
 
 const DailyReports = () => {
+  const [organizations, setOrganizations] = useState([]);
+  const [selectedOrganizationId, setSelectedOrganizationId] = useState("");
+
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const response = await api.get('api/user/organizations');
+        setOrganizations(response.data);
+      } catch (error) {
+        console.error('Error fetching organizations:', error);
+      }
+    };
+
+    fetchOrganizations();
+  }, []);
+
+  const reportDetails = async () => {
+
+    try {
+      const response = await api.get('127.0.0.1:8000/api/booking/org/reports/2025-05-19/2025-05-19/1/');
+      setOrganizations(response.data);
+    } catch (error) {
+      console.error('Error fetching organizations:', error);
+    }
+  }
+
+
+
+  const handleGenerateReport = async () => {
+    if (!selectedOrganizationId) {
+      alert("Please select an organization first");
+      return;
+    }
+    const today = new Date().toISOString().split('T')[0];
+
+    try {
+      const bookingDetails = await getBookingDetails(today, today, selectedOrganizationId);
+      const orgDetails = organizations.find(org => org.id === selectedOrganizationId);
+
+      // Call the function directly (no JSX)
+      generatePdf(bookingDetails, today, today, orgDetails);
+
+    } catch (error) {
+      console.error("Failed to fetch booking details:", error);
+      alert("Failed to generate report. Please try again.");
+    }
+  };
+
+  // Find the selected organization to display its name
+  const selectedOrganization = organizations.find(org => org.id === selectedOrganizationId);
+
   return (
-    
     <div className="flex justify-center items-center min-h-[60vh]">
       <Card className="w-full max-w-[380px] bg-white/70 backdrop-blur-xl shadow-xl border-0 rounded-2xl glass-morphism transition-transform hover:scale-[1.014]">
         <CardHeader className="pb-2">
@@ -44,37 +93,43 @@ const DailyReports = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6">
+          <div className="space-y-6">
             <div>
-              <Label htmlFor="department" className="mb-1 block font-medium">
+              <Label htmlFor="organization" className="mb-1 block font-medium">
                 Organization
               </Label>
-              <Select>
-                <SelectTrigger id="department" className="h-12 rounded-lg border bg-white/80 shadow-sm focus:ring-primary/30 transition-all">
-                  <SelectValue placeholder="Select department" />
+              <Select
+                value={selectedOrganizationId}
+                onValueChange={setSelectedOrganizationId}
+              >
+                <SelectTrigger id="organization" className="h-12 rounded-lg border bg-white/80 shadow-sm focus:ring-primary/30 transition-all">
+                  <SelectValue placeholder="Select organization">
+                    {selectedOrganization ? selectedOrganization.name : null}
+                  </SelectValue>
                 </SelectTrigger>
-                <SelectContent className="bg-white z-20 shadow-lg rounded-xl border mt-2" position="popper">
-                  {departments.map((d) => (
-                    <SelectItem key={d.value} value={d.value}>
-                      {d.label}
+                <SelectContent className="bg-white z-20 shadow-lg rounded-xl border mt-2">
+                  {organizations.map((org) => (
+                    <SelectItem key={org.id} value={org.id}>
+                      {org.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-          </form>
+          </div>
         </CardContent>
         <CardFooter className="flex justify-center">
           <Button
             className="w-full h-11 bg-gradient-to-r from-violet-500 to-purple-400 hover:from-violet-600 hover:to-purple-500 text-white font-semibold rounded-xl shadow hover:shadow-md transition-all duration-150"
-            type="submit"
+            type="button"
+            onClick={handleGenerateReport}
           >
             Generate Report
           </Button>
         </CardFooter>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default DailyReports
+export default DailyReports;

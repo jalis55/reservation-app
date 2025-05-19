@@ -5,7 +5,8 @@ from bookingapp.serializers import CreateBookingSerializer,RetriveBookingSeriali
 from rest_framework.response import Response
 from bookingapp.models import Booking
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
+import datetime
 # Create your views here.
 
 
@@ -51,20 +52,46 @@ class BookingListView(ListAPIView):
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user)
     
-class AllUserBookingListView(GenericAPIView):
-    serializer_class = RetriveBookingSerializer
-    permission_classes = [AllowAny]
 
-    def get_queryset(self):
-        from_dt = self.kwargs.get('from_dt')
-        to_dt = self.kwargs.get('to_dt')
-        return Booking.objects.filter(booking_date__range=[from_dt, to_dt])
+
+class BookingReportView(APIView):
+    permission_classes = [IsAdminUser]
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        try:
+            # Get parameters from URL (if using path params) or request.GET (if using query params)
+            from_dt = self.kwargs.get('from_dt')  # or request.GET.get('from_dt')
+            to_dt = self.kwargs.get('to_dt')      # or request.GET.get('to_dt')
+            organization = self.kwargs.get('organization')  # or request.GET.get('organization')
 
+            # Validate parameters
+            if not all([from_dt, to_dt, organization]):
+                return Response({"error": "Missing required parameters"}, status=400)
+
+
+            # Validate date range
+            if from_dt > to_dt:
+                return Response({"error": "From date cannot be after to date"}, status=400)
+
+            # Query bookings
+            if from_dt == to_dt:
+                bookings = Booking.objects.filter(
+                    booking_date=from_dt,
+                    user__organization=organization
+                )
+            else:
+                bookings = Booking.objects.filter(
+                    booking_date__range=[from_dt, to_dt],
+                    user__organization=organization
+                )
+
+            serializer = RetriveBookingSerializer(bookings, many=True)
+            return Response(serializer.data)
+
+        except ValueError:
+            return Response({"error": "Invalid date format. Use YYYY-MM-DD"}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 
 class CancelBookingView(APIView):

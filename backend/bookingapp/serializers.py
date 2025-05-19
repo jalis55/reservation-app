@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from bookingapp.models import Booking
-from user_app.models import Department
+from user_app.models import Department,Organization
 from django.contrib.auth import get_user_model
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -25,6 +25,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_admin'] = user.is_staff 
         token['is_super_admin']=user.is_superuser
         return token
+    
+
 class DepartmentSerializer(ModelSerializer):
     class Meta:
         model = Department
@@ -46,6 +48,7 @@ class CreateBookingSerializer(ModelSerializer):
 
 class RetriveBookingSerializer(ModelSerializer):
     user=UserSerializer()
+    
     class Meta:
         model=Booking
         fields=['user','booking_date']

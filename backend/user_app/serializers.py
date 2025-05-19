@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser,Organization
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
@@ -57,3 +57,8 @@ class UserListSerializer(serializers.ModelSerializer):
         extra_kwargs={
             'email':{'read_only':True}
         }
+
+class OrgazationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = ['id', 'name','email','phone','address']
