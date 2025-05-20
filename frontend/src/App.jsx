@@ -11,6 +11,9 @@ import Layout from './Layouts/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import DailyReports from './reports/DailyReports';
+import CurrentDateReport from './reports/CurrentDateReport';
+import AsonDateReport from './reports/AsonDateReport';
+import DateRangeReport from './reports/DateRangeReport';
 
 const router = createBrowserRouter([
   {
@@ -22,7 +25,10 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      { path:'/daily-reports', element: <DailyReports/> },
+      { path:'/curdt-report', element: <CurrentDateReport/> },
+      { path:'/asondt-report', element: <AsonDateReport/> },
+      { path:'/rangedt-report', element: <DateRangeReport/> },
+
     ],
   },
   {
