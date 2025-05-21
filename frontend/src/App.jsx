@@ -10,10 +10,10 @@ import ProtectedRoute from './ProtectedRoute';
 import Layout from './Layouts/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import DailyReports from './reports/DailyReports';
 import CurrentDateReport from './reports/CurrentDateReport';
 import AsonDateReport from './reports/AsonDateReport';
 import DateRangeReport from './reports/DateRangeReport';
+import Registration from './pages/Registration';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +35,7 @@ const router = createBrowserRouter([
     element: <RedirectRoute />,
     children: [
       { path: 'login', element: <Login /> },
+      { path: 'register', element: <Registration/> },
       // Add more public routes here
     ],
   },
