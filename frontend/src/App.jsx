@@ -4,41 +4,58 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import RedirectRoute from './RedirectRoute';
-import ProtectedRoute from './ProtectedRoute';
+
+import AuthProvider from './auth/AuthContext';
+import RedirectRoute from './auth/RedirectRoute';
+import RoleRoute from './auth/RoleRoute';
+import RequiredAuth from './auth/ReuiredRoute';
+// import RoleRoute from './auth/RoleRoute';
 import Layout from './Layouts/Layout';
 import Login from './pages/Login';
+import Registration from './pages/Registration';
 import Dashboard from './pages/Dashboard';
 import CurrentDateReport from './reports/CurrentDateReport';
 import AsonDateReport from './reports/AsonDateReport';
 import DateRangeReport from './reports/DateRangeReport';
-import Registration from './pages/Registration';
+import Unauthorized from './pages/Unauthorized';
+
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <ProtectedRoute>
+      <RequiredAuth>
         <Layout />
-      </ProtectedRoute>
+      </RequiredAuth>
     ),
     children: [
       { index: true, element: <Dashboard /> },
       { path:'/curdt-report', element: <CurrentDateReport/> },
       { path:'/asondt-report', element: <AsonDateReport/> },
-      { path:'/rangedt-report', element: <DateRangeReport/> },
-
+    // role-restricted
+    {
+      path: '/rangedt-report',
+      element: (
+        <RoleRoute allowedRoles={['admin', 'superAdmin']}>
+          <DateRangeReport />
+        </RoleRoute>
+      )
+    }
+   
     ],
   },
   {
     element: <RedirectRoute />,
     children: [
       { path: 'login', element: <Login /> },
-      { path: 'register', element: <Registration/> },
-      // Add more public routes here
+      { path:'register', element: <Registration /> },
+      // ... other public routes
     ],
   },
+  {
+    path: '/unauthorized',
+    element:<Unauthorized/>
+  }
 ]);
 
 function App() {

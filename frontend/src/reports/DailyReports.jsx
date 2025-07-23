@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Folder } from "lucide-react";
-import api from '../api';
+import API from "@/api/axios";
 import { getBookingDetails } from "./bookingDetails";
 import { generatePdf } from "./GeneratePdf";
 
@@ -31,7 +31,7 @@ const DailyReports = () => {
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
-        const response = await api.get('api/user/organizations');
+        const response = await API.get('api/user/organizations');
         setOrganizations(response.data);
       } catch (error) {
         console.error('Error fetching organizations:', error);

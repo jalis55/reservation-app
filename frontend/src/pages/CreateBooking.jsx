@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CalendarIcon, Users, CalendarCheck, CheckCircle2, Info } from "lucide-react"
-import api from '../api';
-// import "@/styles/booking.css"
+import API from "@/api/axios"
 
 const CreateBooking = () => {
     const [selectedDates, setSelectedDates] = useState([])
@@ -27,7 +26,7 @@ const CreateBooking = () => {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await api.get("/api/booking/reserve-dates/")
+                const response = await API.get("/api/booking/reserve-dates/")
 
                 setBookings(response.data)
             } catch (error) {
@@ -67,7 +66,7 @@ const CreateBooking = () => {
 
         //api call to save bookings
         try {
-            await api.post("/api/booking/create/", newBookings)
+            await API.post("/api/booking/create/", newBookings)
         }
         catch (error) {
             console.error("Error saving bookings:", error)
@@ -93,7 +92,7 @@ const CreateBooking = () => {
     //Delete booking
     const handleCancelBooking = async (booking) => {
         try {
-            const response = await api.delete(`/api/booking/cancel-booking/${booking.booking_date}/`)
+            const response = await API.delete(`/api/booking/cancel-booking/${booking.booking_date}/`)
             if (response.status === 204) {
                 setBookings(bookings.filter((b) => b.booking_date !== booking.booking_date))
                 setSuccessMessage("Booking deleted successfully.")

@@ -17,11 +17,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Folder } from "lucide-react";
-import api from '../api';
 import { getBookingDetails } from "./bookingDetails";
 import { generatePdf } from "./GeneratePdf";
 import { format } from "date-fns";
 import Swal from 'sweetalert2'; // Import SweetAlert2
+import API from "@/api/axios";
 
 const ReportLayout = ({ reportType }) => {
     const [organizations, setOrganizations] = useState([]);
@@ -33,7 +33,7 @@ const ReportLayout = ({ reportType }) => {
     useEffect(() => {
         const fetchOrganizations = async () => {
             try {
-                const response = await api.get('api/user/organizations');
+                const response = await API.get('api/user/organizations');
                 setOrganizations(response.data);
             } catch (error) {
                 console.error('Error fetching organizations:', error);

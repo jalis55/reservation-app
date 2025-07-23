@@ -1,8 +1,8 @@
-import api from '../api';
+import API from "@/api/axios";
 
 export const getBookingDetails = async (fromDt, toDt, orgId) => {
     try {
-        const response = await api.get(`api/booking/org/reports/${fromDt}/${toDt}/${orgId}/`);
+        const response = await API.get(`api/booking/org/reports/${fromDt}/${toDt}/${orgId}/`);
         return response.data;
     } catch (error) {
         console.error('Error fetching booking details:', error);

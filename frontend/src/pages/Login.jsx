@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate, useLocation,Link } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,16 +12,10 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { user, login } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Redirect if already logged in
-  useEffect(() => {
-    if (user) {
-      navigate(location.state?.from || '/', { replace: true });
-    }
-  }, [user, navigate, location.state]);
+  const {login}= useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,13 +29,15 @@ const Login = () => {
 
     setLoading(true);
 
-    try {
-      await login({ email, password });
-    } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
-    } finally {
-      setLoading(false);
+    const status = await login(email, password);
+    if (status === 200) {
+      navigate(location.state?.from || '/', { replace: true });
     }
+    else {
+      setError('Login failed. Please check your credentials.');
+    }
+    setLoading(false);    
+    
   };
 
   return (
@@ -122,13 +118,11 @@ const Login = () => {
             )}
           </Button>
         </form>
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-blue-500 hover:underline">
-              Sign up
-            </Link>
-          </p>
+        <div className="mt-6 text-center text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Sign up
+          </Link>
         </div>
         <div className="pt-8 text-xs text-center text-gray-400">
           © {new Date().getFullYear()} Reserva.
