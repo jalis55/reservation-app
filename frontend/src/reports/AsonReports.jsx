@@ -29,7 +29,7 @@ const [organizations, setOrganizations] = useState([]);
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
-        const response = await api.get('api/user/organizations');
+        const response = await api.get('api/user/organizations/');
         setOrganizations(response.data);
       } catch (error) {
         console.error('Error fetching organizations:', error);

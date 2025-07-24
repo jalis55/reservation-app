@@ -36,7 +36,7 @@ const Navbar = () => {
                         <Link to="/" className="flex items-center">
                             <img src={brandLogo} alt="Brand Logo" className="h-9 w-auto" />
                         </Link>
-                        
+
                         <div className="hidden md:block ml-10">
                             <ul className="flex items-center space-x-6 text-sm font-medium">
                                 {user && user.isAdmin && (
@@ -96,8 +96,9 @@ const Navbar = () => {
 
                             {emailOpen && (
                                 <div className="absolute right-0 mt-2 w-40 bg-gray-200 rounded-md shadow-lg py-1 z-20">
-                                    <button 
-                                        className="block w-full text-left px-4 py-2 text-sm rounded-md hover:bg-stone-100" 
+                                    <Link to="/change-password" className="block w-full text-left px-4 py-2 text-sm rounded-md hover:bg-stone-100">Change Password</Link>
+                                    <button
+                                        className="block w-full text-left px-4 py-2 text-sm rounded-md hover:bg-stone-100"
                                         onClick={handleLogout}
                                     >
                                         Logout
@@ -147,12 +148,16 @@ const Navbar = () => {
                             </button>
 
                             {emailOpen && (
-                                <button 
-                                    className="block w-full text-left px-3 py-2 pl-8 text-sm rounded-md hover:bg-stone-400" 
-                                    onClick={handleLogout}
-                                >
-                                    Logout
-                                </button>
+                                <>
+
+                                    <Link to="/change-password" className="block w-full text-left px-3 py-2 pl-8 text-sm rounded-md hover:bg-stone-400">Change Password</Link>
+                                    <button
+                                        className="block w-full text-left px-3 py-2 pl-8 text-sm rounded-md hover:bg-stone-400"
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>

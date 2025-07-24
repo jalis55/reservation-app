@@ -18,6 +18,7 @@ import CurrentDateReport from './reports/CurrentDateReport';
 import AsonDateReport from './reports/AsonDateReport';
 import DateRangeReport from './reports/DateRangeReport';
 import Unauthorized from './pages/Unauthorized';
+import ChangePassword from './pages/ChangePassword';
 
 
 const router = createBrowserRouter([
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
+      {path:'/change-password', element: <ChangePassword/>},
       { path:'/curdt-report', element: <CurrentDateReport/> },
       { path:'/asondt-report', element: <AsonDateReport/> },
     // role-restricted
